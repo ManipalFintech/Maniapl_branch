@@ -1,0 +1,151 @@
+:root {
+  --navy: #0C4A85;
+  --blue: #0B84E0;
+  --paper: #F5F7FA;
+  --ink: #142434;
+  --ink-soft: #5B6B7D;
+  --line: #DCE2EA;
+  --amber: #C08A1E;
+  --gold-light: #ECD55C;
+  --green: #3F7A5C;
+  --red: #A6423A;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--sans); background: var(--paper); color: var(--ink); }
+
+/* ---------- Login ---------- */
+.login-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, var(--navy) 0%, #0B3D6B 65%, #0A3560 100%);
+  padding: 20px;
+}
+.login-card {
+  background: white; padding: 40px 32px; width: 100%; max-width: 360px;
+  border-radius: 6px; border-top: 3px solid var(--amber);
+}
+.login-card .brand-logo { height: 44px; display: block; margin: 0 auto 20px; }
+.login-card h1 { font-size: 17px; margin: 0 0 4px; text-align: center; }
+.login-card .subtitle { font-size: 13px; color: var(--ink-soft); margin: 0 0 24px; text-align: center; }
+.login-card input {
+  width: 100%; padding: 12px 14px; margin-bottom: 12px; border: 1px solid var(--line);
+  border-radius: 6px; font-size: 15px; font-family: var(--sans);
+}
+.login-card button {
+  width: 100%; padding: 13px; background: var(--blue); color: white; border: none;
+  border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px;
+}
+.login-card button:disabled { opacity: 0.6; }
+.error-text { color: var(--red); font-size: 12.5px; margin: -4px 0 12px; }
+.bootstrap-note {
+  margin-top: 18px; padding: 12px; background: #FFF7E6; border-left: 3px solid var(--amber);
+  font-size: 12px; color: var(--ink-soft);
+}
+
+/* ---------- App shell (Admin/Manager) ---------- */
+.app-shell { display: flex; min-height: 100vh; flex-wrap: wrap; }
+.sidebar {
+  width: 220px; background: var(--navy); border-top: 3px solid var(--amber);
+  color: #E7ECF3; padding: 28px 20px; flex-shrink: 0;
+}
+.sidebar .brand-logo { height: 34px; margin-bottom: 18px; display: block; }
+.sidebar h1 { font-size: 15px; font-weight: 600; margin: 0 0 2px; }
+.sidebar .subtitle { font-size: 12px; color: #93A2B8; margin-bottom: 32px; }
+.sidebar .who {
+  font-family: var(--mono); font-size: 12px; color: #C7D0DE;
+  border-top: 1px solid #2A3F5F; padding-top: 14px; margin-top: 24px;
+}
+.sidebar button.logout {
+  margin-top: 10px; margin-right: 6px; background: none; border: 1px solid #3A5177;
+  color: #C7D0DE; padding: 6px 10px; font-size: 12px; cursor: pointer; border-radius: 3px;
+}
+.main { flex: 1; padding: 32px; max-width: 1040px; min-width: 0; }
+.main h2 { font-size: 20px; font-weight: 600; margin: 0 0 6px; }
+.main .lede { color: var(--ink-soft); font-size: 13.5px; margin: 0 0 26px; max-width: 60ch; }
+section.block { margin-bottom: 36px; }
+section.block h3 {
+  font-size: 13px; font-weight: 600; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+thead th { text-align: left; font-weight: 500; color: var(--ink-soft); padding: 8px 10px; border-bottom: 1px solid var(--line); }
+tbody td { padding: 9px 10px; border-bottom: 1px solid #EAEDF1; vertical-align: middle; }
+tbody tr:hover { background: #EFF2F6; }
+.mono { font-family: var(--mono); font-size: 12px; }
+
+.pill { display: inline-block; padding: 2px 8px; font-size: 11px; font-family: var(--mono); border-radius: 2px; }
+.pill.pending_admin, .pill.pending_manager, .pill.in_progress { background: #F2E7D2; color: var(--amber); }
+.pill.approved, .pill.complete { background: #DEEBE3; color: var(--green); }
+.pill.rejected, .pill.limit_exceeded { background: #F1DEDC; color: var(--red); }
+.pill.regularized { background: #E1E6F0; color: var(--navy); }
+
+button.action {
+  font-family: var(--sans); font-size: 12px; font-weight: 500; padding: 6px 12px;
+  border: 1px solid var(--line); background: white; cursor: pointer; border-radius: 3px; margin-right: 6px;
+}
+button.action.approve { border-color: var(--green); color: var(--green); }
+button.action.approve:hover { background: var(--green); color: white; }
+button.action.reject { border-color: var(--red); color: var(--red); }
+button.action.reject:hover { background: var(--red); color: white; }
+button.action.forward { border-color: var(--blue); color: var(--blue); }
+button.action.forward:hover { background: var(--blue); color: white; }
+
+.empty { color: var(--ink-soft); font-size: 13px; font-style: italic; padding: 14px 0; }
+.form-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+.form-row input, .form-row select { padding: 8px 10px; border: 1px solid var(--line); border-radius: 3px; font-size: 13px; font-family: var(--sans); }
+.form-note { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-header { margin-bottom: 6px; }
+.cal-dow { font-size: 11px; color: var(--ink-soft); text-align: center; font-family: var(--mono); }
+.cal-cell { aspect-ratio: 1; border: 1px solid var(--line); border-radius: 4px; padding: 6px; font-size: 11px; display: flex; flex-direction: column; justify-content: space-between; }
+.cal-cell-empty { border: none; }
+.cal-day { color: var(--ink-soft); font-family: var(--mono); }
+.cal-hours { font-family: var(--mono); font-weight: 600; color: var(--green); font-size: 11px; }
+.cal-hours.cal-open { color: var(--amber); }
+.cal-cell-active { background: #EFF6FF; border-color: var(--blue); cursor: pointer; }
+.cal-cell-active:hover { background: #E1EEFC; }
+.cal-cell-selected { outline: 2px solid var(--amber); }
+.cal-detail { margin-top: 16px; padding: 14px 16px; background: #F7F9FB; border-left: 3px solid var(--amber); font-size: 13px; line-height: 1.8; }
+
+/* ---------- Employee (mobile-first) ---------- */
+.emp-shell { min-height: 100vh; background: var(--paper); padding: 20px; max-width: 480px; margin: 0 auto; }
+.emp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.emp-greeting { font-size: 20px; font-weight: 700; margin: 0; }
+.emp-date { font-size: 12.5px; color: var(--ink-soft); margin: 2px 0 0; }
+.emp-signout { color: var(--red); font-size: 12.5px; background: none; border: none; cursor: pointer; }
+.status-box { background: white; border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 4px solid var(--amber); font-size: 13.5px; }
+.emp-action-btn {
+  width: 100%; background: var(--blue); color: white; padding: 16px; border: none; border-radius: 8px;
+  font-weight: 600; font-size: 15px; margin-bottom: 12px; cursor: pointer; border-top: 3px solid var(--amber);
+}
+.emp-action-btn:disabled { background: #B9C4D0; border-top-color: #B9C4D0; cursor: default; }
+.emp-link-btn { display: block; width: 100%; text-align: center; background: none; border: none; color: var(--navy); font-size: 13px; text-decoration: underline; padding: 10px 0; cursor: pointer; }
+
+/* ---------- Camera capture ---------- */
+.camera-overlay { position: fixed; inset: 0; background: black; z-index: 999; display: flex; flex-direction: column; }
+.camera-video { flex: 1; object-fit: cover; width: 100%; transform: scaleX(-1); }
+.camera-face-ring {
+  position: absolute; top: 50%; left: 50%; width: 220px; height: 280px; border-radius: 140px;
+  border: 3px solid rgba(255,255,255,0.5); transform: translate(-50%, -60%);
+}
+.camera-face-ring.active { border-color: var(--amber); }
+.camera-prompt-bar {
+  background: rgba(12,74,133,0.92); color: white; padding: 20px 24px; text-align: center;
+}
+.camera-prompt-bar .prompt { font-size: 16px; font-weight: 600; }
+.camera-prompt-bar .mode { font-size: 12px; color: var(--gold-light); margin-top: 4px; }
+.camera-cancel { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.4); color: white; border: none; border-radius: 20px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
+
+.confirm-photo { width: 100%; max-width: 480px; border-radius: 8px; margin-bottom: 16px; }
+.confirm-detail { background: white; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.confirm-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+.confirm-row .label { color: var(--ink-soft); }
+
+@media (max-width: 720px) {
+  .app-shell { flex-direction: column; }
+  .sidebar { width: 100%; padding: 16px 20px; }
+  .main { padding: 20px; }
+}
