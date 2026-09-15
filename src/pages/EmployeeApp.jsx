@@ -139,7 +139,8 @@ function MyCalendar({ onBack }) {
   useEffect(() => {
     const y = month.getFullYear(), m = month.getMonth();
     const from = `${y}-${pad(m + 1)}-01`;
-    const to = `${y}-${pad(m + 1)}-31`;
+    const lastDay = new Date(y, m + 1, 0).getDate();
+    const to = `${y}-${pad(m + 1)}-${pad(lastDay)}`;
     api.myAttendance({ from, to }).then(setRecords).catch(() => setRecords([]));
   }, [month]);
 

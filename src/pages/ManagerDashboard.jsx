@@ -33,7 +33,8 @@ export default function ManagerDashboard() {
     if (!calEmpId) return;
     const y = calMonth.getFullYear(), m = calMonth.getMonth();
     const from = `${y}-${String(m + 1).padStart(2, '0')}-01`;
-    const to = `${y}-${String(m + 1).padStart(2, '0')}-31`;
+    const lastDay = new Date(y, m + 1, 0).getDate();
+    const to = `${y}-${String(m + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
     api.listAttendance({ profileId: calEmpId, from, to }).then(setCalRecords).catch((err) => setError(err.message));
   }, [calEmpId, calMonth]);
 
