@@ -28,7 +28,7 @@ export default function AccountPanel({ onClose }) {
   }
 
   return (
-    <section className="block">
+    <section className="block card">
       <h3>Change my password</h3>
       <form onSubmit={handleSubmit}>
         <div className="form-row">

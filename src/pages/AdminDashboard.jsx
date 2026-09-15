@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import * as api from '../lib/api.js';
 import AttendanceCalendar from '../components/AttendanceCalendar.jsx';
+import EmployeeSelector from '../components/EmployeeSelector.jsx';
 
 function Pill({ status }) {
   return <span className={`pill ${status}`}>{status.replace('_', ' ')}</span>;
 }
 
-const emptyForm = { emp_id: '', name: '', role: 'employee', reporting_manager_id: '', branch: 'main' };
+const emptyForm = { emp_id: '', name: '', role: 'employee', reporting_manager_id: '', branch: '' };
 
 export default function AdminDashboard() {
   const [employees, setEmployees] = useState([]);
@@ -122,33 +123,45 @@ export default function AdminDashboard() {
       </p>
       {error && <div className="error-text">{error}</div>}
 
-      <section className="block">
+      <section className="block card">
         <h3>Add employee</h3>
         <form onSubmit={handleCreateEmployee}>
-          <div className="form-row">
-            <input placeholder="Emp ID" value={form.emp_id}
-              onChange={(e) => setForm({ ...form, emp_id: e.target.value })} required />
-            <input placeholder="Full name" value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-              <option value="employee">Employee</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-            <select value={form.reporting_manager_id}
-              onChange={(e) => setForm({ ...form, reporting_manager_id: e.target.value })}>
-              <option value="">No reporting manager</option>
-              {employees.filter((e) => e.role === 'manager').map((m) => (
-                <option key={m.id} value={m.id}>{m.name} ({m.emp_id})</option>
-              ))}
-            </select>
-            <button className="action forward" type="submit">Create</button>
+          <div className="form-grid">
+            <label>Emp ID
+              <input placeholder="e.g. EMP1042" value={form.emp_id}
+                onChange={(e) => setForm({ ...form, emp_id: e.target.value })} required />
+            </label>
+            <label>Full name
+              <input placeholder="e.g. Priya Nair" value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+            </label>
+            <label>Role
+              <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+                <option value="employee">Employee</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+            </label>
+            <label>Reporting manager
+              <select value={form.reporting_manager_id}
+                onChange={(e) => setForm({ ...form, reporting_manager_id: e.target.value })}>
+                <option value="">No reporting manager</option>
+                {employees.filter((e) => e.role === 'manager').map((m) => (
+                  <option key={m.id} value={m.id}>{m.name} ({m.emp_id})</option>
+                ))}
+              </select>
+            </label>
+            <label>Branch
+              <input placeholder="e.g. MG Road Branch" value={form.branch}
+                onChange={(e) => setForm({ ...form, branch: e.target.value })} required />
+            </label>
           </div>
+          <button className="action forward" type="submit" style={{ marginTop: 12 }}>Create employee</button>
         </form>
         {formMsg && <div className="form-note">{formMsg}</div>}
       </section>
 
-      <section className="block">
+      <section className="block card">
         <h3>Bulk upload employees (CSV)</h3>
         <p className="form-note" style={{ marginBottom: 8 }}>
           Columns: <span className="mono">emp_id,name,role,reporting_manager_id,branch</span>.
@@ -162,7 +175,7 @@ export default function AdminDashboard() {
         {bulkMsg && <div className="form-note">{bulkMsg}</div>}
       </section>
 
-      <section className="block">
+      <section className="block card">
         <h3>Requests awaiting forward to manager ({pendingRequests.length})</h3>
         {pendingRequests.length === 0 ? (
           <div className="empty">No pending requests.</div>
@@ -184,20 +197,20 @@ export default function AdminDashboard() {
         )}
       </section>
 
-      <section className="block">
+      <section className="block card">
         <h3>Employees ({employees.length})</h3>
         <table>
-          <thead><tr><th>Name</th><th>Emp ID</th><th>Profile ID</th><th>Role</th><th>Branch</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th>Name</th><th>Emp ID</th><th>Role</th><th>Branch</th><th>Status</th><th></th></tr></thead>
           <tbody>
             {employees.map((e) => (
               <tr key={e.id}>
                 <td>{e.name}</td>
                 <td className="mono">{e.emp_id}</td>
-                <td className="mono" style={{ fontSize: 10 }}>{e.id}</td>
                 <td>{e.role}</td>
                 <td>{e.branch}</td>
                 <td><span className={`pill ${e.is_active ? 'complete' : 'rejected'}`}>{e.is_active ? 'active' : 'inactive'}</span></td>
                 <td>
+                  <button className="action" onClick={() => navigator.clipboard.writeText(e.id)}>Copy ID</button>
                   <button className="action" onClick={() => handleResetPassword(e.id, e.name)}>Reset password</button>
                   <button className={`action ${e.is_active ? 'reject' : 'approve'}`} onClick={() => handleToggleStatus(e.id, !e.is_active)}>
                     {e.is_active ? 'Deactivate' : 'Activate'}
@@ -209,12 +222,10 @@ export default function AdminDashboard() {
         </table>
       </section>
 
-      <section className="block">
-        <h3>Attendance calendar — hours per day</h3>
+      <section className="block card">
+        <h3>Attendance calendar — hours per day, photos &amp; location</h3>
         <div className="form-row" style={{ alignItems: 'center' }}>
-          <select value={calEmpId} onChange={(e) => setCalEmpId(e.target.value)}>
-            {employees.map((e) => <option key={e.id} value={e.id}>{e.name} ({e.emp_id})</option>)}
-          </select>
+          <EmployeeSelector employees={employees} value={calEmpId} onChange={setCalEmpId} />
           <button className="action" onClick={() => shiftMonth(-1)}>← Prev</button>
           <strong>{calMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</strong>
           <button className="action" onClick={() => shiftMonth(1)}>Next →</button>
@@ -222,7 +233,7 @@ export default function AdminDashboard() {
         <AttendanceCalendar records={calRecords} month={calMonth} />
       </section>
 
-      <section className="block">
+      <section className="block card">
         <h3>Attendance log</h3>
         <button className="action forward" style={{ marginBottom: 12 }} onClick={handleExportCsv}>
           Export CSV (includes hours spent)

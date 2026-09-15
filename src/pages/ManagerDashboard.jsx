@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as api from '../lib/api.js';
 import AttendanceCalendar from '../components/AttendanceCalendar.jsx';
+import EmployeeSelector from '../components/EmployeeSelector.jsx';
 
 export default function ManagerDashboard() {
   const [requests, setRequests] = useState([]);
@@ -63,7 +64,7 @@ export default function ManagerDashboard() {
       </p>
       {error && <div className="error-text">{error}</div>}
 
-      <section className="block">
+      <section className="block card">
         <h3>Regularization requests</h3>
         <p className="form-note" style={{ marginBottom: 10 }}>
           Each employee is capped at 3 approved regularizations per calendar month — beyond that,
@@ -95,16 +96,14 @@ export default function ManagerDashboard() {
         )}
       </section>
 
-      <section className="block">
-        <h3>Team attendance calendar — hours per day</h3>
+      <section className="block card">
+        <h3>Team attendance calendar — hours, photos &amp; location</h3>
         {team.length === 0 ? (
           <div className="empty">No employees currently report to you.</div>
         ) : (
           <>
             <div className="form-row" style={{ alignItems: 'center' }}>
-              <select value={calEmpId} onChange={(e) => setCalEmpId(e.target.value)}>
-                {team.map((e) => <option key={e.id} value={e.id}>{e.name} ({e.emp_id})</option>)}
-              </select>
+              <EmployeeSelector employees={team} value={calEmpId} onChange={setCalEmpId} />
               <button className="action" onClick={() => shiftMonth(-1)}>← Prev</button>
               <strong>{calMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</strong>
               <button className="action" onClick={() => shiftMonth(1)}>Next →</button>
@@ -114,7 +113,7 @@ export default function ManagerDashboard() {
         )}
       </section>
 
-      <section className="block">
+      <section className="block card">
         <button className="action forward" onClick={handleExportCsv}>
           Export team attendance CSV (includes hours spent)
         </button>

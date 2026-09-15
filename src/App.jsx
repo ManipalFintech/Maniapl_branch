@@ -11,6 +11,7 @@ import logo from './assets/logo.png';
 function Shell() {
   const { session, profile, loading, logout } = useAuth();
   const [showAccount, setShowAccount] = useState(false);
+  const [managerTab, setManagerTab] = useState('team'); // 'team' | 'mine'
 
   if (loading) return null;
   if (!session) return <Login />;
@@ -37,8 +38,22 @@ function Shell() {
       </aside>
       <main className="main">
         {showAccount && <AccountPanel onClose={() => setShowAccount(false)} />}
+
         {profile.role === 'admin' && <AdminDashboard />}
-        {profile.role === 'manager' && <ManagerDashboard />}
+
+        {profile.role === 'manager' && (
+          <>
+            <div className="tabs">
+              <button className={`tab ${managerTab === 'team' ? 'active' : ''}`} onClick={() => setManagerTab('team')}>
+                Team Dashboard
+              </button>
+              <button className={`tab ${managerTab === 'mine' ? 'active' : ''}`} onClick={() => setManagerTab('mine')}>
+                My Attendance
+              </button>
+            </div>
+            {managerTab === 'team' ? <ManagerDashboard /> : <EmployeeApp embedded />}
+          </>
+        )}
       </main>
     </div>
   );

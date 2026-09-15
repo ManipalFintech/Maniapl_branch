@@ -57,12 +57,9 @@ export default function Login() {
         {error && <div className="error-text">{error}</div>}
         <button disabled={busy}>{busy ? 'Signing in…' : 'Login'}</button>
 
-        <div style={{ textAlign: 'center', marginTop: 14 }}>
-          <button type="button" onClick={() => setShowBootstrap(!showBootstrap)}
-            style={{ background: 'none', border: 'none', color: '#5B6B7D', fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}>
-            First time setting this up? Create the first Admin
-          </button>
-        </div>
+        <button type="button" className="bootstrap-link" onClick={() => setShowBootstrap(!showBootstrap)}>
+          First time setting this up? Create the first Admin
+        </button>
 
         {showBootstrap && (
           <div className="bootstrap-note">
@@ -71,16 +68,11 @@ export default function Login() {
               new employees are added from inside the Admin dashboard.
             </p>
             <input placeholder="Admin Emp ID (e.g. ADMIN001)" value={bForm.emp_id}
-              onChange={(e) => setBForm({ ...bForm, emp_id: e.target.value })}
-              style={{ marginBottom: 8, width: '100%', padding: 8, borderRadius: 4, border: '1px solid #DCE2EA' }} />
+              onChange={(e) => setBForm({ ...bForm, emp_id: e.target.value })} />
             <input placeholder="Admin full name" value={bForm.name}
-              onChange={(e) => setBForm({ ...bForm, name: e.target.value })}
-              style={{ marginBottom: 8, width: '100%', padding: 8, borderRadius: 4, border: '1px solid #DCE2EA' }} />
-            <button type="button" onClick={handleBootstrap}
-              style={{ width: '100%', padding: 10, background: '#0C4A85', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }}>
-              Create first Admin
-            </button>
-            {bMsg && <p style={{ fontSize: 12, marginTop: 8 }}>{bMsg}</p>}
+              onChange={(e) => setBForm({ ...bForm, name: e.target.value })} />
+            <button type="button" onClick={handleBootstrap}>Create first Admin</button>
+            {bMsg && <p style={{ fontSize: 12, marginTop: 10 }}>{bMsg}</p>}
           </div>
         )}
       </form>

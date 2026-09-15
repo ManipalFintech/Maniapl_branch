@@ -9,7 +9,7 @@ function todayIso() {
 }
 function pad(n) { return String(n).padStart(2, '0'); }
 
-export default function EmployeeApp() {
+export default function EmployeeApp({ embedded = false }) {
   const { profile, logout } = useAuth();
   const [view, setView] = useState('home'); // home | camera | confirm | success | calendar | regularize
   const [today, setToday] = useState(null);
@@ -103,13 +103,13 @@ export default function EmployeeApp() {
   if (view === 'regularize') return <RegularizeForm attDate={today?.att_date} onDone={() => { setView('home'); loadToday(); }} />;
 
   return (
-    <div className="emp-shell">
+    <div className={`emp-shell ${embedded ? 'emp-shell-embedded' : ''}`}>
       <div className="emp-header">
         <div>
           <p className="emp-greeting">Hi, {profile.name}</p>
           <p className="emp-date">{new Date().toDateString()}</p>
         </div>
-        <button className="emp-signout" onClick={logout}>Sign out</button>
+        {!embedded && <button className="emp-signout" onClick={logout}>Sign out</button>}
       </div>
 
       <div className="status-box">
