@@ -249,4 +249,15 @@ export default function AdminDashboard() {
               <tr key={a.id}>
                 <td>{a.profiles.name} <span className="mono">({a.profiles.emp_id})</span></td>
                 <td className="mono">{a.att_date}</td>
-                <td className="mono">{a.login_time ? new
+                <td className="mono">{a.login_time ? new Date(a.login_time).toLocaleTimeString() : '—'}</td>
+                <td className="mono">{a.logout_time ? new Date(a.logout_time).toLocaleTimeString() : '—'}</td>
+                <td className="mono">{a.duration_label || '—'}</td>
+                <td><Pill status={a.status} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </>
+  );
+}
