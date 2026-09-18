@@ -120,4 +120,73 @@ export async function uploadSelfie(blob, mode) {
 }
 
 // ---------- Edge Function calls (the only pieces needing elevated privilege) ----------
-async function
+async function callAdminFunction(body) {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  const { data, error } = await supabase.functions.invoke('admin-employees', {
+    body,
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined
+  });
+
+  if (error) {
+    // supabase-js only gives a generic "non-2xx status code" message here -
+    // the actual error JSON the function sent back is on error.context (a
+    // Response object). Read it directly so real errors are visible.
+    let detail = error.message;
+    try {
+      if (error.context && typeof error.context.json === 'function') {
+        const body = await error.context.json();
+        if (body?.error) detail = body.error;
+      }
+    } catch (_) {
+      // context wasn't valid JSON - fall back to the generic message
+    }
+    throw new Error(detail);
+  }
+
+  if (data?.error) throw new Error(data.error);
+  return data;
+}
+
+export function createEmployee(employee) {
+  return callAdminFunction({ action: 'create', ...employee });
+}
+
+export function bulkCreateEmployees(rows) {
+  return callAdminFunction({ action: 'bulk_create', rows });
+}
+
+export function resetEmployeePassword(profileId) {
+  return callAdminFunction({ action: 'reset_password', profile_id: profileId });
+}
+
+// ---------- CSV export (built client-side, downloaded as a file) ----------
+export function downloadCsv(rows, filename) {
+  const header = 'Name,Emp ID,Date,Login Time,Logout Time,Hours Spent,Status\n';
+  const body = rows.map((r) => [
+    r.profiles?.name || '', r.profiles?.emp_id || '', r.att_date,
+    r.login_time || '', r.logout_time || '', r.duration_label || '', r.status
+  ].join(',')).join('\n');
+
+  const blob = new Blob([header + body], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---------- Minimal CSV parsing for bulk employee upload (no dependency) ----------
+export function parseEmployeeCsv(text) {
+  const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  if (lines.length === 0) return [];
+  const headers = lines[0].split(',').map((h) => h.trim().toLowerCase());
+  return lines.slice(1).map((line) => {
+    const cells = line.split(',').map((c) => c.trim());
+    const row = {};
+    headers.forEach((h, i) => { row[h] = cells[i] || ''; });
+    return row;
+  });
+}
