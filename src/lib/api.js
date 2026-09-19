@@ -161,12 +161,18 @@ export function resetEmployeePassword(profileId) {
   return callAdminFunction({ action: 'reset_password', profile_id: profileId });
 }
 
+export function deleteEmployee(profileId) {
+  return callAdminFunction({ action: 'delete_employee', profile_id: profileId });
+}
+
 // ---------- CSV export (built client-side, downloaded as a file) ----------
 export function downloadCsv(rows, filename) {
-  const header = 'Name,Emp ID,Date,Login Time,Logout Time,Hours Spent,Status\n';
+  const header = 'Name,Emp ID,Date,Login Time,Login Lat,Login Lng,Logout Time,Logout Lat,Logout Lng,Hours Spent,Status\n';
   const body = rows.map((r) => [
     r.profiles?.name || '', r.profiles?.emp_id || '', r.att_date,
-    r.login_time || '', r.logout_time || '', r.duration_label || '', r.status
+    r.login_time || '', r.login_lat ?? '', r.login_lng ?? '',
+    r.logout_time || '', r.logout_lat ?? '', r.logout_lng ?? '',
+    r.duration_label || '', r.status
   ].join(',')).join('\n');
 
   const blob = new Blob([header + body], { type: 'text/csv' });

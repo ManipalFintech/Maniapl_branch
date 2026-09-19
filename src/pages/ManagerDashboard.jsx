@@ -13,6 +13,9 @@ export default function ManagerDashboard() {
   const [calMonth, setCalMonth] = useState(new Date());
   const [calRecords, setCalRecords] = useState([]);
 
+  const [logFrom, setLogFrom] = useState('');
+  const [logTo, setLogTo] = useState('');
+
   async function load() {
     try {
       const [reqs, teamList] = await Promise.all([
@@ -49,7 +52,8 @@ export default function ManagerDashboard() {
   }
 
   function handleExportCsv() {
-    api.listAttendance().then((rows) => api.downloadCsv(rows, 'team_attendance_export.csv'));
+    api.listAttendance({ from: logFrom || undefined, to: logTo || undefined })
+      .then((rows) => api.downloadCsv(rows, 'team_attendance_export.csv'));
   }
 
   function shiftMonth(delta) {
@@ -115,8 +119,24 @@ export default function ManagerDashboard() {
       </section>
 
       <section className="block card">
+        <h3>Export team attendance</h3>
+        <div className="form-row" style={{ alignItems: 'center' }}>
+          <label style={{ fontSize: 12.5, color: 'var(--ink-soft)', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            From
+            <input type="date" value={logFrom} onChange={(e) => setLogFrom(e.target.value)} />
+          </label>
+          <label style={{ fontSize: 12.5, color: 'var(--ink-soft)', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            To
+            <input type="date" value={logTo} onChange={(e) => setLogTo(e.target.value)} />
+          </label>
+          {(logFrom || logTo) && (
+            <button className="action" onClick={() => { setLogFrom(''); setLogTo(''); }} style={{ marginTop: 18 }}>
+              Clear filter
+            </button>
+          )}
+        </div>
         <button className="action forward" onClick={handleExportCsv}>
-          Export team attendance CSV (includes hours spent)
+          Export team attendance CSV (includes hours spent &amp; location)
         </button>
       </section>
     </>

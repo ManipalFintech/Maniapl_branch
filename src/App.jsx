@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import EmployeeApp from './pages/EmployeeApp.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import AdminGallery from './pages/AdminGallery.jsx';
 import ManagerDashboard from './pages/ManagerDashboard.jsx';
 import AccountPanel from './pages/AccountPanel.jsx';
 import logo from './assets/logo.png';
@@ -12,6 +13,7 @@ function Shell() {
   const { session, profile, loading, logout } = useAuth();
   const [showAccount, setShowAccount] = useState(false);
   const [managerTab, setManagerTab] = useState('team'); // 'team' | 'mine'
+  const [adminTab, setAdminTab] = useState('dashboard'); // 'dashboard' | 'gallery'
 
   if (loading) return null;
   if (!session) return <Login />;
@@ -39,7 +41,19 @@ function Shell() {
       <main className="main">
         {showAccount && <AccountPanel onClose={() => setShowAccount(false)} />}
 
-        {profile.role === 'admin' && <AdminDashboard />}
+        {profile.role === 'admin' && (
+          <>
+            <div className="tabs">
+              <button className={`tab ${adminTab === 'dashboard' ? 'active' : ''}`} onClick={() => setAdminTab('dashboard')}>
+                Dashboard
+              </button>
+              <button className={`tab ${adminTab === 'gallery' ? 'active' : ''}`} onClick={() => setAdminTab('gallery')}>
+                Attendance Gallery
+              </button>
+            </div>
+            {adminTab === 'dashboard' ? <AdminDashboard /> : <AdminGallery />}
+          </>
+        )}
 
         {profile.role === 'manager' && (
           <>

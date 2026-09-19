@@ -10,7 +10,9 @@ export function AuthProvider({ children }) {
 
   const loadProfile = useCallback(async () => {
     const { data, error } = await supabase.rpc('my_profile');
-    if (!error) setProfile(data);
+    if (!error && data) {
+      setProfile({ ...data, role: (data.role || '').toLowerCase().trim() });
+    }
     return data;
   }, []);
 

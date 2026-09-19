@@ -25,6 +25,9 @@ export default function AdminDashboard() {
   const [calMonth, setCalMonth] = useState(new Date());
   const [calRecords, setCalRecords] = useState([]);
 
+  const [logFrom, setLogFrom] = useState('');
+  const [logTo, setLogTo] = useState('');
+
   async function loadAll() {
     try {
       const [emps, att, pending] = await Promise.all([
@@ -61,8 +64,14 @@ export default function AdminDashboard() {
     }
   }
 
+  const filteredAttendance = attendance.filter((a) => {
+    if (logFrom && a.att_date < logFrom) return false;
+    if (logTo && a.att_date > logTo) return false;
+    return true;
+  });
+
   function handleExportCsv() {
-    api.downloadCsv(attendance, 'attendance_export.csv');
+    api.downloadCsv(filteredAttendance, 'attendance_export.csv');
   }
 
   async function handleCreateEmployee(e) {
@@ -108,6 +117,20 @@ export default function AdminDashboard() {
   async function handleToggleStatus(profileId, nextActive) {
     try {
       await api.setEmployeeStatus(profileId, nextActive);
+      loadAll();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function handleDeleteEmployee(profileId, name) {
+    const sure = confirm(
+      `Permanently delete ${name}? This removes their login and ALL their attendance history. This cannot be undone.`
+    );
+    if (!sure) return;
+    try {
+      const res = await api.deleteEmployee(profileId);
+      alert(res.message);
       loadAll();
     } catch (err) {
       alert(err.message);
@@ -219,6 +242,7 @@ export default function AdminDashboard() {
                   <button className={`action ${e.is_active ? 'reject' : 'approve'}`} onClick={() => handleToggleStatus(e.id, !e.is_active)}>
                     {e.is_active ? 'Deactivate' : 'Activate'}
                   </button>
+                  <button className="action reject" onClick={() => handleDeleteEmployee(e.id, e.name)}>Delete permanently</button>
                 </td>
               </tr>
             ))}
@@ -239,13 +263,28 @@ export default function AdminDashboard() {
 
       <section className="block card">
         <h3>Attendance log</h3>
+        <div className="form-row" style={{ alignItems: 'center' }}>
+          <label style={{ fontSize: 12.5, color: 'var(--ink-soft)', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            From
+            <input type="date" value={logFrom} onChange={(e) => setLogFrom(e.target.value)} />
+          </label>
+          <label style={{ fontSize: 12.5, color: 'var(--ink-soft)', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            To
+            <input type="date" value={logTo} onChange={(e) => setLogTo(e.target.value)} />
+          </label>
+          {(logFrom || logTo) && (
+            <button className="action" onClick={() => { setLogFrom(''); setLogTo(''); }} style={{ marginTop: 18 }}>
+              Clear filter
+            </button>
+          )}
+        </div>
         <button className="action forward" style={{ marginBottom: 12 }} onClick={handleExportCsv}>
-          Export CSV (includes hours spent)
+          Export CSV (includes hours spent &amp; location)
         </button>
         <table>
           <thead><tr><th>Employee</th><th>Date</th><th>Login</th><th>Logout</th><th>Hours</th><th>Status</th></tr></thead>
           <tbody>
-            {attendance.map((a) => (
+            {filteredAttendance.map((a) => (
               <tr key={a.id}>
                 <td>{a.profiles.name} <span className="mono">({a.profiles.emp_id})</span></td>
                 <td className="mono">{a.att_date}</td>
@@ -257,6 +296,7 @@ export default function AdminDashboard() {
             ))}
           </tbody>
         </table>
+        {filteredAttendance.length === 0 && <div className="empty">No attendance records in this date range.</div>}
       </section>
     </>
   );
